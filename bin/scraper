@@ -1,0 +1,53 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+$console = new Application();
+
+$console
+        ->register('crawl')
+		->setDefinition(array(
+            new InputArgument('spider', InputArgument::REQUIRED, 'Directory name'),
+        ))
+        ->setDefinition(array(
+            new InputArgument('dir', InputArgument::REQUIRED, 'Output directory'),
+        ))
+        ->setDescription('Screen scraper')
+        ->setCode(function (InputInterface $input, OutputInterface $output) use($console) {
+
+                    $downloadDirectory = $input->getArgument('dir');
+                    $downloader = new \Xam\Unsplash\Downloader\ImageDownloader();
+                    $downloader->setClient(new Guzzle\Http\Client());
+
+                    $total = $downloader->setPath('http://unsplash.com/api/read')->getTotal();
+                    $progress = $console->getHelperSet()->get('progress');
+
+                    $progress->start($output, $total);
+                    $start = 0;
+                    while ($start < $total) {
+
+                        $document = $downloader->getDocument($start);
+                        $images = $downloader->getImageUrls($document);
+                        foreach ($images AS $imageUrl) {
+
+                            $start++;
+                            try {
+                                $downloader->download($imageUrl, $downloadDirectory);
+                            } catch (\Exception $e) {
+                                $output->writeln('<error>Could not download ' . $imageUrl . '</error>');
+                            }
+                            $progress->advance();
+                        }
+                    }
+
+                    $progress->finish();
+                    return true;
+                });
+
+$console->run();
