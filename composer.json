@@ -1,0 +1,33 @@
+{
+    "name": "pjabang1/xam-scraper",
+    "description": "A fast high level php web scraping framework used to crawl the web (images, pages, feeds etc). It is highly extendable and can be used for a wide range of cases.",
+    "keywords": ["Php", "Scraper"],
+    "homepage": "http://github.com/pjabang1/xam-html",
+    "type": "web-scraper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pa Essa Jabang",
+            "email": "pjabang@gmail.com",
+            "homepage": "http://pjabang.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.1",
+        "symfony/console": "2.3.*@dev",
+		"behat/mink": "*",
+        "behat/mink-goutte-driver": "*"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-0": {
+            "Xam\\Scraper": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1.x-dev"
+        }
+    }
+}
